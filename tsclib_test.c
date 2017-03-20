@@ -62,7 +62,16 @@ int main(int argc, char *argv[])
 	TSC_RD(0x01, scrap_register);
 
 
-	/* DAQ Configuration */
+	/* DAQ Configuration -> FMC 1 SMEM MODE !!! */
+
+	/* Downsampling */
+	if (ifc14_scope_acq_tcsr_setclr(0x00, 1<<15, 0) != 0)
+		goto error_tosca;
+
+	/* Averaging factor = 4 */
+	if (ifc14_scope_acq_tcsr_setclr(0x00, 0, 7 << 2) != 0)
+		goto error_tosca;
+
 	
 error_tosca:
 	TSC_LOG("Exiting ...");
