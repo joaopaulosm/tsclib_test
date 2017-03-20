@@ -19,7 +19,7 @@ typedef enum {
 } tosca_status;
 
 int tsc_tcsr_read(int offset, int register_idx, int32_t *i32_reg_val);
-tosca_status tsc_tcsr_write(int offset, int register_idx, int32_t value);
+int tsc_tcsr_write(int offset, int register_idx, int32_t value);
 
 
 #endif /* TSCLIB_TEST_H_ */

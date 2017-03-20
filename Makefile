@@ -2,7 +2,7 @@ INCDIR = ../include
 LIBDIR = ../lib
 
 INC = -I $(INCDIR)
-LIB = -I $(LIBDIR)
+LIB = -L $(LIBDIR)
 
 CC = gcc
 CFLAGS  = -Wall
