@@ -72,6 +72,14 @@ int main(int argc, char *argv[])
 	if (ifc14_scope_acq_tcsr_setclr(0x00, 0, 7 << 2) != 0)
 		goto error_tosca;
 
+	/* Configure BUFFER size register 7B - 16 MB !!! */
+	if (ifc14_scope_acq_tcsr_setclr(0x03, 16, 0) != 0)
+		goto error_tosca;
+
+	/* Allocate buffers in kernel */
+	
+
+
 	
 error_tosca:
 	TSC_LOG("Exiting ...");
