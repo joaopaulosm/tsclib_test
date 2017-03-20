@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+/* Include TSCLIB headers */
+#include "tsculib.h"
+#include "tscioctl.h"
+
 #include "tsclib_test.h"
 
 int tsc_tcsr_read(int offset, int register_idx, int32_t *i32_reg_val)
@@ -41,7 +45,7 @@ int tsc_tcsr_write(int offset, int register_idx, int32_t value)
         if (ret >= 0)
         {
             tsc_tcsr_read(offset, register_idx, &i32_reg_val);
-            printf("Wrote 0x%08x to register %02x \n", *i32_reg_val, register_idx);
+            printf("Wrote 0x%08x to register %02x \n", i32_reg_val, register_idx);
         }
     }
     return ret;
