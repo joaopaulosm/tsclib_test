@@ -1,0 +1,89 @@
+tsclib test
+
+MAIN registers: 0x00 (tosca signature)
+				0x01 (dummy read/write for test)
+
+SCOPE registers: 0x60 - 0x6F (scope main registers)
+
+ACQ registers: 0x70-0x73, 0x74-0x77, 0x78-0x7B, 0x7C-0x7F (FMC1/FMC2 SRAM/SMEM)
+
+FMC registers: 0x80-0xBF or 0xC0-0xFF based on FMC1/FMC2
+
+ROADMAP
+
+-> define BASE_ADDRESS (BARn)
+-> define XUSER offset
+
+INIT AND FIRST CONFIGURATIONS
+
+-> call tsc_init()
+
+-> read TOSCA signature
+	register 0x00
+
+-> read APP signature
+	register 0x60
+
+-> read FMC FDK signature
+	register 0x80/0xC0 (fmc1-2)
+
+-> read SCOPE to recognize correct FMC
+	bits 10:8 = 001 ADC3110
+	-> SCOPE register 0x00
+
+-> configure down sampling mode to 1 (averaging)
+	bit 15 = 1
+	FMC1 SRAM: reg 0x70
+	FMC2 SRAM: reg 0x74
+
+	FMC1 SMEM: reg 0x78
+	FMC2 SMEM: reg 0x7C
+
+-> configure averaging factor to 4
+	bits 4:2 = 001 (SRAM) or 000 (SMEM) 
+	FMC1 SRAM: reg 0x70
+	FMC2 SRAM: reg 0x74
+
+	FMC1 SMEM: reg 0x78
+	FMC2 SMEM: reg 0x7C
+
+
+
+SRAM MODE	
+
+-> configure a pre-defined number of samples (1024 samples per channel)
+	READ bit 11 = 0 [16K / 32K buffers]
+	WRITE bit 14:12 = 101 (1k sample per channel)
+	-> FMC1 SRAM: 0x70
+	-> FMC2 SRAM: 0x74
+
+SMEM MODE
+-> configure AVERAGING mode
+
+
+
+-> configure a pre-defined number of samples (1024 samples per channel)
+	READ averaging number ?
+	WRITE bits 7:0 -> size of SMEM in MBytes
+	-> FMC1 SRAM: 0x7B
+	-> FMC2 SRAM: 0x7F
+	-> Base address will be ZERO
+
+
+-> user tsc functions to allocate buffers in kernel 
+	based on number-of-samples
+
+CONFIGURE THE ACQUISITION PARAMETERS
+
+-> set npretrig to zero
+
+-> set clock source to internal
+
+-> set clock frequency
+
+-> set clock divisor
+
+-> set trigger to software
+
+ARM THE ADCs
+
