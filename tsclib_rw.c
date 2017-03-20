@@ -18,7 +18,7 @@
 int tsc_tcsr_read(int offset, int register_idx, int32_t *i32_reg_val)
 {
     int ret;
-    ret = tsc_csr_rd((BASEADDRESS + offset + (register_idx * 4)), i32_reg_val);
+    ret = tsc_csr_read((BASEADDRESS + offset + (register_idx * 4)), i32_reg_val);
     
     if (ret < 0)
     {
@@ -40,7 +40,7 @@ int tsc_tcsr_write(int offset, int register_idx, int32_t value)
 
     if (ret >= 0)
     {
-        ret = tsc_csr_wr(BASEADDRESS + offset + (register_idx * 4), value);
+        ret = tsc_csr_write(BASEADDRESS + offset + (register_idx * 4), &value);
         
         if (ret >= 0)
         {
