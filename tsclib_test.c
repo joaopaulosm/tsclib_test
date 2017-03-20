@@ -77,7 +77,15 @@ int main(int argc, char *argv[])
 		goto error_tosca;
 
 	/* Allocate buffers in kernel */
-	
+	TSC_LOG("Trying to allocate dma");
+	ret = tsc_dma_alloc(DMA_CHAN_0);
+	printf("DMA Alloc returned %d \n", ret);
+
+	/* De-allocate */
+	TSC_LOG("Trying to de-allocate dma");
+	ret = tsc_dma_free(DMA_CHAN_0);
+	printf("DMA Free returned %d \n", ret);
+
 
 
 	
