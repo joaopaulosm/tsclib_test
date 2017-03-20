@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	ret = tsc_init();
 	if (ret < 0)
 	{
-		TOSCA_ERR("tsc_init()",ret);
+		TSC_ERR("tsc_init()",ret);
 		goto clean_exit;
 	}
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	TSC_LOG("Reading SCOPE signature");
 	if (tsc_tcsr_read(XUSERADDR, 0x60, &scrap_register) != 0)
 		goto error_tosca;
-	TSC_RD(0x00, scrap_register);
+	TSC_RD(0x60, scrap_register);
 
 	TSC_LOG("R/W Test Register");
 	if (tsc_tcsr_write(XUSERADDR, 0x01, TESTBITS) != 0)
@@ -65,7 +65,7 @@ error_tosca:
 	TSC_LOG("Exiting ...");
 	ret = tsc_exit();
 	if (ret < 0)
-		TOSCA_ERR("tsc_exit()",ret);
+		TSC_ERR("tsc_exit()",ret);
 
 clean_exit:
 	return 0;

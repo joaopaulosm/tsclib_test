@@ -12,8 +12,8 @@
 #define XUSERADDR	0x1000
 
 #define TSC_ERR(msg, val) fprintf(stderr,"[TSC ERR] Function %s returned error number %d \n", msg, val)
-#define TSC_WR(reg, val) printf("[TSC WR] Register 0x%02x = 0x%08x \n" )
-#define TSC_RD(reg, val) printf("[TSC RD] Register 0x%02x = 0x%08x \n" )
+#define TSC_WR(reg, val) printf("[TSC WR] Register 0x%02x = 0x%08x \n", reg, val)
+#define TSC_RD(reg, val) printf("[TSC RD] Register 0x%02x = 0x%08x \n", reg, val)
 #define TSC_LOG(msg) printf("[TSC LOG] %s\n", msg)
 
 typedef enum {
