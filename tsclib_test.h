@@ -8,7 +8,7 @@
 #ifndef TSCLIB_TEST_H_
 #define TSCLIB_TEST_H_
 
-#define BASEADDRESS 0x68000000
+#define BASEADDRESS 0
 #define XUSERADDR	0x1000
 
 #define TOSCA_ERR(msg, val) fprintf(stderr,"TOSCA function %s returned error number %d \n", msg, val)
