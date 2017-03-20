@@ -34,7 +34,7 @@ static inline int32_t ifc14_get_scope_tcsr_offset(void) {
 
 int tsc_tcsr_read(int offset, int register_idx, int32_t *i32_reg_val);
 int tsc_tcsr_write(int offset, int register_idx, int32_t value);
-int tsc_tcsr_setclr(int offset, int register_idx, int32_t setmask, int32_t clrmask)
+int tsc_tcsr_setclr(int offset, int register_idx, int32_t setmask, int32_t clrmask);
 
 int ifc14_xuser_tcsr_read(int register_idx, int32_t *i32_reg_val);
 int ifc14_xuser_tcsr_write(int register_idx, int32_t value);
