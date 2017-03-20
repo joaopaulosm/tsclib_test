@@ -18,7 +18,7 @@
 int tsc_tcsr_read(int offset, int register_idx, int32_t *i32_reg_val)
 {
     int ret;
-    ret = tsc_csr_read((BASEADDRESS + offset + (register_idx * 4)), i32_reg_val);   
+    ret = tsc_csr_read((offset + (register_idx * 4)), i32_reg_val);   
     if (ret < 0)
     {
         TSC_ERR("tsc_csr_read()", ret);
@@ -36,7 +36,7 @@ int tsc_tcsr_write(int offset, int register_idx, int32_t value)
 
     if (ret >= 0)
     {
-        ret = tsc_csr_write(BASEADDRESS + offset + (register_idx * 4), &value);
+        ret = tsc_csr_write(offset + (register_idx * 4), &value);
         
         if (ret >= 0)
         {
@@ -47,3 +47,112 @@ int tsc_tcsr_write(int offset, int register_idx, int32_t value)
     return ret;
 }
 
+
+int tsc_tcsr_setclr(int offset, int register_idx, int32_t setmask, int32_t clrmask)
+{
+    int32_t i32_reg_val;
+    int ret;
+    
+    ret = tsc_csr_read((offset + (register_idx * 4)), &i32_reg_val);
+    if (ret < 0) goto read_err;
+    
+    TSC_SETCLR(register_idx, setmask, clrmask);
+
+    i32_reg_val &= ~clrmask;
+    i32_reg_val |= setmask;
+
+    ret = tsc_csr_write(offset + (register_idx * 4), &i32_reg_val);
+    if (ret < 0) goto write_err;
+
+    if (tsc_tcsr_read(offset, register_idx, &i32_reg_val) == 0)
+    {
+        TSC_RD(register_idx, i32_reg_val);
+        return 0;
+    }
+    else
+        return -1;
+
+write_err:
+    TSC_ERR("tsc_csr_write()", ret);
+
+read_err:
+    TSC_ERR("tsc_csr_read()", ret);
+    
+    return ret;
+}
+
+/* Functions for accessing any XUSER TCSR *********************************************************/
+
+int ifc14_xuser_tcsr_read(int register_idx, int32_t *i32_reg_val)
+{
+    return tsc_tcsr_read(XUSERADDR, register_idx, i32_reg_val);
+}
+
+int ifc14_xuser_tcsr_write(int register_idx, int32_t value)
+{
+    return tsc_tcsr_write(XUSERADDR, register_idx, value);
+}
+
+int ifc14_xuser_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask)
+{
+    return tsc_tcsr_setclr(XUSERADDR, register_idx, setmask, clrmask);
+}
+
+/* **********************************************************************************************/
+
+
+/* Functions for accessing 0x60 to 0x6F (SCOPE MAIN TCSR) *******************************************/
+
+int ifc14_scope_tcsr_read(int register_idx, int32_t *i32_reg_val)
+{
+    return tsc_tcsr_read(XUSERADDR, 0x60 + register_idx, i32_reg_val);
+}
+
+int ifc14_scope_tcsr_write(int register_idx, int32_t value)
+{
+    return tsc_tcsr_write(XUSERADDR, 0x60 + register_idx, value);
+}
+
+int ifc14_scope_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask)
+{
+    return tsc_tcsr_setclr(XUSERADDR, 0x60 + register_idx, setmask, clrmask);
+}
+
+/**********************************************************************************************************/
+
+/* Functions for accessing 0x70-0x73, 0x74-0x77, 0x78-0x7B, 0x7C-0x7F 
+(SCOPE FMC1/FMC2 and SRAM/SMEM specific) registers ********************************************************/
+
+int ifc14_scope_acq_tcsr_read(int register_idx, int32_t *i32_reg_val)
+{
+    return tsc_tcsr_read(XUSERADDR, ifc14_get_scope_tcsr_offset() + register_idx, i32_reg_val);
+}
+
+int ifc14_scope_acq_tcsr_write(int register_idx, int32_t value)
+{
+    return tsc_tcsr_write(XUSERADDR, ifc14_get_scope_tcsr_offset() + register_idx, value);
+}
+
+int ifc14_scope_acq_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask)
+{
+    return tsc_tcsr_setclr(XUSERADDR, ifc14_get_scope_tcsr_offset() + register_idx, setmask, clrmask);
+}
+
+/***********************************************************************************************************/
+
+/* Functions for accessing 0x80-0xBF or 0xC0-0xFF based on FMC1/FMC2. */
+
+int ifc14_fmc_tcsr_read(int register_idx, int32_t *reg_val)
+{
+    return tsc_tcsr_read(XUSERADDR, ifc14_get_fmc_tcsr_offset() + register_idx, reg_val);
+}
+
+int ifc14_fmc_tcsr_write(int register_idx, int32_t value)
+{
+    return tsc_tcsr_write(XUSERADDR, ifc14_get_fmc_tcsr_offset() + register_idx, value);
+}
+
+int ifc14_fmc_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask)
+{
+    return tsc_tcsr_setclr(XUSERADDR, ifc14_get_fmc_tcsr_offset() + register_idx, setmask, clrmask);
+}

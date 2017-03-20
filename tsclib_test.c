@@ -44,22 +44,25 @@ int main(int argc, char *argv[])
 	}
 
 	TSC_LOG("Reading TOSCA signature");
-	if (tsc_tcsr_read(XUSERADDR, 0x00, &scrap_register) != 0)
+	if (ifc14_xuser_tcsr_read(0x00, &scrap_register) != 0)
 		goto error_tosca;
 	TSC_RD(0x00, scrap_register);
 
 	TSC_LOG("Reading SCOPE signature");
-	if (tsc_tcsr_read(XUSERADDR, 0x60, &scrap_register) != 0)
+	if (ifc14_scope_tcsr_read(0x00, &scrap_register) != 0)
 		goto error_tosca;
 	TSC_RD(0x60, scrap_register);
 
 	TSC_LOG("R/W Test Register");
-	if (tsc_tcsr_write(XUSERADDR, 0x01, TESTBITS) != 0)
+	if (ifc14_xuser_tcsr_write(0x01, TESTBITS) != 0)
 		goto error_tosca;
 	
-	if (tsc_tcsr_read(XUSERADDR, 0x01, &scrap_register) != 0)
+	if (ifc14_xuser_tcsr_read(XUSERADDR, 0x01, &scrap_register) != 0)
 		goto error_tosca;
 	TSC_RD(0x01, scrap_register);
+
+
+	/* DAQ Configuration */
 	
 error_tosca:
 	TSC_LOG("Exiting ...");
