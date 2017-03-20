@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	if (ifc14_xuser_tcsr_write(0x01, TESTBITS) != 0)
 		goto error_tosca;
 	
-	if (ifc14_xuser_tcsr_read(XUSERADDR, 0x01, &scrap_register) != 0)
+	if (ifc14_xuser_tcsr_read(0x01, &scrap_register) != 0)
 		goto error_tosca;
 	TSC_RD(0x01, scrap_register);
 
