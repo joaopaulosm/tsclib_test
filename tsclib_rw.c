@@ -167,9 +167,9 @@ int ifc14_dma_allocate(ifc14device *ifcdevice)
         goto err_sram_ctl;
     }
 
-    ifcdevice->sram_dma_buf->size = 1024;
+    ifcdevice->sram_dma_buf->size = 16*1024;
 
-    LOG((5, "Trying to allocate %dkiB in kernel\n", ifcdevice->sram_size / 1024));
+    LOG((5, "Trying to allocate %dkiB in kernel\n", 16*1024 / 1024));
 
     if (tsc_kbuf_alloc(ifcdevice->sram_dma_buf) == NULL) {
         goto err_sram_buf;
@@ -195,8 +195,8 @@ int ifc14_dma_allocate(ifc14device *ifcdevice)
         goto err_smem_buf;
     }
 
-    LOG((5, "Trying to allocate %dMiB in userspace\n", ifcdevice->smem_size / 1024 / 1024));
-    ifcdevice->all_ch_buf = calloc(ifcdevice->smem_size, 1);
+    LOG((5, "Trying to allocate %dMiB in userspace\n", 128*1024*1024 / 1024 / 1024));
+    ifcdevice->all_ch_buf = calloc(128*1024*1024, 1);
     if(!ifcdevice->all_ch_buf){
         goto err_smem_user_buf;
     }

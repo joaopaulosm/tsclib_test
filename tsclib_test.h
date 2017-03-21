@@ -8,6 +8,8 @@
 #ifndef TSCLIB_TEST_H_
 #define TSCLIB_TEST_H_
 
+#include <stddef.h>
+
 #define XUSERADDR	0x1000
 
 #define TSC_ERR(msg, val) fprintf(stderr,"[TSC ERR] Function %s returned error number %d \n", msg, val)
