@@ -156,3 +156,68 @@ int ifc14_fmc_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask)
 {
     return tsc_tcsr_setclr(XUSERADDR, ifc14_get_fmc_tcsr_offset() + register_idx, setmask, clrmask);
 }
+
+
+
+int ifc14_dma_allocate(ifc14device *ifcdevice)
+{
+    //ifcdevice->sram_dma_buf = calloc(1, sizeof(struct pev_ioctl_buf));
+    ifcdevice->sram_dma_buf = calloc(1, sizeof(struct tsc_ioctl_kbuf_req));
+    if (!ifcdevice->sram_dma_buf) {
+        goto err_sram_ctl;
+    }
+
+    ifcdevice->sram_dma_buf->size = 1024;
+
+    LOG((5, "Trying to allocate %dkiB in kernel\n", ifcdevice->sram_size / 1024));
+
+    if (tsc_kbuf_alloc(ifcdevice->sram_dma_buf) == NULL) {
+        goto err_sram_buf;
+    }
+
+    //ifcdevice->smem_dma_buf = calloc(1, sizeof(struct pev_ioctl_buf));
+    ifcdevice->smem_dma_buf = calloc(1, sizeof(struct tsc_ioctl_kbuf_req));
+    if (!ifcdevice->smem_dma_buf) {
+        goto err_smem_ctl;
+    }
+
+    // Try to allocate as large dma memory as possible
+    ifcdevice->smem_dma_buf->size = 128*1024*1024;
+    do {
+        LOG((5, "Trying to allocate %dMiB in kernel\n", ifcdevice->smem_dma_buf->size / 1024 / 1024));
+
+        p = tsc_kbuf_alloc(ifcdevice->smem_dma_buf);
+
+
+    } while (p == NULL && (ifcdevice->smem_dma_buf->size >>= 1) > 0);
+
+    if(!p) {
+        goto err_smem_buf;
+    }
+
+    LOG((5, "Trying to allocate %dMiB in userspace\n", ifcdevice->smem_size / 1024 / 1024));
+    ifcdevice->all_ch_buf = calloc(ifcdevice->smem_size, 1);
+    if(!ifcdevice->all_ch_buf){
+        goto err_smem_user_buf;
+    }
+
+    return 0;
+
+err_smem_user_buf:
+    //pevx_buf_free(ifcdevice->card, ifcdevice->smem_dma_buf);
+    tsc_kbuf_free(ifcdevice->smem_dma_buf);
+ 
+
+err_smem_buf:
+    free(ifcdevice->smem_dma_buf);
+
+err_smem_ctl:
+    //pevx_buf_free(ifcdevice->card, ifcdevice->smem_dma_buf);
+    tsc_kbuf_free(ifcdevice->sram_dma_buf);
+
+err_sram_buf:
+    free(ifcdevice->sram_dma_buf);
+
+err_sram_ctl:
+    return -1;
+}

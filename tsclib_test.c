@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 {
 	int ret;
 	int32_t scrap_register = 0;
+	ifc14device ifc14;
 
 	if (argc != 2) {
 		TSC_LOG("Missing FMC number");
@@ -76,17 +77,31 @@ int main(int argc, char *argv[])
 	if (ifc14_scope_acq_tcsr_setclr(0x03, 16, 0) != 0)
 		goto error_tosca;
 
+	/* Setting pretrigger to 1/8  */
+	if (ifc14_scope_acq_tcsr_setclr(0x00, 1 << 5, 0) != 0)
+		goto error_tosca;
+
+	/* Setting clock source to internal */
+	
+
+
 	/* Allocate buffers in kernel */
 	TSC_LOG("Trying to allocate dma");
-	ret = tsc_dma_alloc(DMA_CHAN_0);
-	printf("DMA Alloc returned %d \n", ret);
+	ret = ifc14_dma_allocate(&ifc14);
+	printf("DMA Allocate returned %d \n", ret);
+
 
 	/* De-allocate */
-	TSC_LOG("Trying to de-allocate dma");
-	ret = tsc_dma_free(DMA_CHAN_0);
-	printf("DMA Free returned %d \n", ret);
+	TSC_LOG("Trying to de-allocate dma buffers");
+	ret = tsc_kbuf_free(ifc14.smem_dma_buf);
+	printf("tsc_kbuf_free %d \n", ret);
 
+	free(ifc14.smem_dma_buf);
+	
+	ret = tsc_kbuf_free(ifc14.sram_dma_buf);
+	printf("tsc_kbuf_free %d \n", ret);
 
+	free(ifc14.sram_dma_buf);
 
 	
 error_tosca:
@@ -98,5 +113,7 @@ error_tosca:
 clean_exit:
 	return 0;
 }
+
+
 
 

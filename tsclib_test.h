@@ -16,6 +16,13 @@
 #define TSC_LOG(msg) printf("[TSC LOG] %s\n", msg)
 #define TSC_SETCLR(reg, set, clr) printf("[TSC SETCLR] Register 0x%02x set mask = 0x%08x clear mask = 0x%08x\n" ,reg, set, clr);
 
+typedef struct ifc14device
+{
+	struct tsc_ioctl_kbuf_req    *sram_dma_buf;   /**< Buffer for SRAM DMA transfers */
+    struct tsc_ioctl_kbuf_req    *smem_dma_buf;   /**< Buffer for SMEM DMA transfers */
+    void                    	 *all_ch_buf;     /**< Buffer to store raw SMEM data */
+} ifc14device;
+
 typedef enum {
     tosca_success = 0,    
     tosca_error  = -1,   
@@ -51,6 +58,9 @@ int ifc14_scope_acq_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrma
 int ifc14_fmc_tcsr_read(int register_idx, int32_t *reg_val);
 int ifc14_fmc_tcsr_write(int register_idx, int32_t value);
 int ifc14_fmc_tcsr_setclr(int register_idx, int32_t setmask, int32_t clrmask);
+
+int ifc14_dma_allocate(ifc14device *ifcdevice);
+
 
 
 #endif /* TSCLIB_TEST_H_ */
